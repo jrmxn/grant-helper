@@ -1,0 +1,52 @@
+[paths]
+use_env_json = false
+figure_directory = "/mnt/hdd2/Dropbox/Research/reports/2024-R03/misc/figures/"
+pdf_path = "/home/mcintosh/Downloads/2024-07-01_r03 - hbMEP grant R03.pdf"
+main_output_dir = "/mnt/hdd2/Dropbox/Research/reports/2024-R03/temp/"
+ignore_output_dir = "/mnt/hdd2/Dropbox/Research/reports/2024-R03/misc/gdoc_trash"
+
+[sections]
+INTRODUCTION = "introduction.pdf"
+SUMMARY = "summary.pdf"
+NARRATIVE = "narrative.pdf"
+"SPECIFIC AIMS" = "specific_aims.pdf"
+"RESEARCH STRATEGY" = "research_strategy.pdf"
+REFERENCES = "references.pdf"
+FIGURES = "figures_section_IGNORE.pdf"
+FACILITIES = "facilities.pdf"
+EQUIPMENT = "equipment.pdf"
+"PERSONNEL JUSTIFICATION" = "personnel_just.pdf"
+"ADDITIONAL JUSTIFICATION" = "addtional_narrative_justification_dmsj.pdf"
+"RESOURCE SHARING PLAN" = "resource_sharing.pdf"
+"DATA MANAGEMENT AND SHARING" = "other_plans_IGNORE.pdf"
+"ELIGIBILITY CRITERIA (STUDY 1)" = "_not_attach_18_0.0_Elegibility_criteria.pdf"
+"INCLUSION OF INDIVIDUALS ACROSS THE LIFESPAN (STUDY 1)" = "study1_InclusionChildrenLifespan.pdf"
+"INCLUSION OF WOMEN AND MINORITIES (STUDY 1)" = "study1_InclusionWomenMinorities.pdf"
+"RECRUITMENT AND RETENTION PLAN (STUDY 1)" = "study1_Recruitment_RetentionPlan.pdf"
+"PROTECTION OF HUMAN SUBJECTS (STUDY 1)" = "study1_Protection_of_Human_Subjects.pdf"
+"DATA AND SAFETY MONITORING PLAN (STUDY 1)" = "study1_Data_and_Safety_Monitoring_Plan.pdf"
+"STRUCTURE OF THE STUDY TEAM (STUDY 1)" = "study1_structure_of_study_team.pdf"
+"INCLUSION OF INDIVIDUALS ACROSS THE LIFESPAN (STUDY 2)" = "study2_InclusionChildrenLifespan.pdf"
+"INCLUSION OF WOMEN AND MINORITIES (STUDY 2)" = "study2_InclusionWomenMinorities.pdf"
+"RECRUITMENT AND RETENTION PLAN (STUDY 2)" = "study2_Recruitment_RetentionPlan.pdf"
+"PROTECTION OF HUMAN SUBJECTS (STUDY 2)" = "study2_Protection_of_Human_Subjects.pdf"
+"DATA AND SAFETY MONITORING PLAN (STUDY 2)" = "study2_Data_and_Safety_Monitoring_Plan.pdf"
+"STRUCTURE OF THE STUDY TEAM (STUDY 2)" = "study2_structure_of_study_team.pdf"
+TITLE = "title_section_IGNORE.pdf"
+"STATEMENT OF WORK" = "statement_of_work_section_IGNORE.pdf"
+BITS = "bits_section_IGNORE.pdf"
+
+[merge]
+sets = [
+    { name = "science_bundle", sections = ["INTRODUCTION", "SUMMARY", "NARRATIVE", "SPECIFIC AIMS", "RESEARCH STRATEGY", "REFERENCES"] }
+]
+
+[processing]
+remove_hyperlinks = true
+attach_string = "datetime"
+science_keys = [
+    "FACILITIES", "EQUIPMENT", "BUDGET JUSTIFICATION", "RESOURCE SHARING PLAN",
+    "DATA MANAGEMENT AND SHARING", "ELIGIBILITY CRITERIA", "INCLUSION OF INDIVIDUALS ACROSS THE LIFESPAN",
+    "INCLUSION OF WOMEN AND MINORITIES", "RECRUITMENT AND RETENTION PLAN", "PROTECTION OF HUMAN SUBJECTS",
+    "DATA AND SAFETY MONITORING PLAN", "STRUCTURE OF THE STUDY TEAM"
+]

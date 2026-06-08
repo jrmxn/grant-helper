@@ -1,0 +1,9 @@
+/.idea/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.pdf
+/temp/
+env.json
+/driveapiproject-*

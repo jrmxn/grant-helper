@@ -1,0 +1,59 @@
+[paths]
+use_env_json = false
+figure_directory = "/home/mcintosh/Desktop/dapr/grant_helper/figures/"
+pdf_path = "/home/mcintosh/Downloads/2026-05-00_dapr_hbmep-spatial.pdf"
+main_output_dir = "/home/mcintosh/Desktop/dapr/grant_helper/"
+ignore_output_dir = "/home/mcintosh/Desktop/dapr/grant_helper/misc/trash"
+
+[sections]
+"TITLE" = "title_IGNORE.pdf"
+"PROJECT SUMMARY" = "project_summary.pdf"
+NARRATIVE = "narrative_IGNORE.pdf"
+"RESEARCH PLAN" = "research_plan.pdf"
+"PROJECT TIMELINE" = "project_timeline.pdf"
+BIBLIOGRAPHY = "bibliography.pdf"
+RESOURCES = "resources_facilities.pdf"
+"DATA MANAGEMENT AND SHARING" = "data_management_sharing.pdf"
+"HUMAN SUBJECTS DOCUMENTS" = "human_subjects.pdf"
+"BUDGET AND BUDGET JUSTIFICATION" = "budget_justification_IGNORE.pdf"
+"BUDGET" = "budget_justification_IGNORE.pdf"
+"CONSORTIUM AGREEMENT INTENT" = "consortium_intent_IGNORE.pdf"
+BIOSKETCHES = "biosketches_IGNORE.pdf"
+"NEW AREA OF RESEARCH JUSTIFICATION" = "new_area.pdf"
+"LETTERS OF SUPPORT" = "letters_of_support.pdf"
+"LETTER OF INTENT" = "letter_of_intent_IGNORE.pdf"
+
+[merge]
+preamble = 'mcintosh'
+sets = [
+    { name = "core_bundle", sections = ["PROJECT SUMMARY", "RESEARCH PLAN", "PROJECT TIMELINE", "BIBLIOGRAPHY", "RESOURCES", "DATA MANAGEMENT AND SHARING",
+    "/home/mcintosh/Desktop/dapr/final_components/2026-05-22_mcintosh_dapr_budget_FINAL.pdf",
+    "/home/mcintosh/Desktop/dapr/final_components/2026-05-22_mcintosh_dapr_budget_justification_FINAL.pdf",] },
+    { name = "additional_bundle", sections = [
+        "/home/mcintosh/Desktop/dapr/final_components/2026-05-27_mcintosh_biosketch.pdf",
+        "/home/mcintosh/Desktop/dapr/final_components/2026-05-27_carmel_biosketch.pdf",
+        "HUMAN SUBJECTS DOCUMENTS",
+        "NEW AREA OF RESEARCH JUSTIFICATION",
+        # "LETTERS OF SUPPORT",
+        "/home/mcintosh/Desktop/dapr/final_components/2026-05-27_Consortium_Agreement_Intent_Letter.pdf"
+    ] },
+    { name = "spa_bundle", sections = [
+        "PROJECT SUMMARY", "NARRATIVE", "RESEARCH PLAN", "PROJECT TIMELINE", "BIBLIOGRAPHY", "RESOURCES", "DATA MANAGEMENT AND SHARING",
+        "/home/mcintosh/Desktop/dapr/final_components/2026-05-22_mcintosh_dapr_budget_FINAL.pdf",
+        "/home/mcintosh/Desktop/dapr/final_components/2026-05-22_mcintosh_dapr_budget_justification_FINAL.pdf",
+        "/home/mcintosh/Desktop/dapr/final_components/2026-05-27_mcintosh_biosketch.pdf",
+        "/home/mcintosh/Desktop/dapr/final_components/2026-05-27_carmel_biosketch.pdf",
+        "HUMAN SUBJECTS DOCUMENTS",
+        "NEW AREA OF RESEARCH JUSTIFICATION",
+        # "LETTERS OF SUPPORT",
+        "/home/mcintosh/Desktop/dapr/final_components/2026-05-27_Consortium_Agreement_Intent_Letter.pdf"
+    ] }
+]
+[processing]
+remove_hyperlinks = true
+attach_string = "datetime"
+science_keys = []
+
+[los]
+output_subdir = "temp"
+order = ["nh"]
