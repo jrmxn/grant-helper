@@ -42,9 +42,14 @@ Follow these steps to set up the local virtual environment:
    ```
 
 3. **Activate the virtual environment**:
-   ```bash
-   source venv/bin/activate
-   ```
+   - On macOS/Linux:
+     ```bash
+     source venv/bin/activate
+     ```
+   - On Windows:
+     ```cmd
+     .\venv\Scripts\activate
+     ```
 
 4. **Install dependencies**:
    ```bash
@@ -58,7 +63,7 @@ Configuration is managed via `config.toml`. You can also use a local `env.json` 
 ### 1. Local Environment Overrides (`env.json`)
 If `use_env_json = true` is set in the `[paths]` section of your TOML config, the script will look for an `env.json` file in the root directory. This is useful for machine-specific paths that should not be committed to version control.
 
-Example `env.json`:
+Example `env.json` (Note: On Windows, use double backslashes `\\` or forward slashes `/` for paths):
 ```json
 {
   "figure_directory": "/path/to/figures/",
@@ -84,6 +89,16 @@ Example `env.json`:
 Run the script by specifying a configuration file:
 ```bash
 python main.py --config configs/2024_r03.toml
+```
+
+You can use the following mutually exclusive flags to control which parts of the pipeline run:
+- `--svg-only`: Skips downloading the Google Doc and splitting/merging the PDFs. Only processes SVG figures.
+- `--skip-svg`: Skips processing of SVG figures, but downloads, splits, and merges PDFs as usual.
+
+Examples:
+```bash
+python main.py --config configs/2026_r01-renewal.toml --svg-only
+python main.py --config configs/2026_r01-renewal.toml --skip-svg
 ```
 
 ### Strict Mode

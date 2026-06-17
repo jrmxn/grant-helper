@@ -11,6 +11,7 @@ try:
     from google.oauth2 import service_account
     from googleapiclient.discovery import build
     from googleapiclient.http import MediaIoBaseDownload
+    from googleapiclient.errors import HttpError
     HAS_GDRIVE = True
 except ImportError:
     HAS_GDRIVE = False
@@ -26,22 +27,32 @@ def export_doc_to_pdf(document_id, output_filepath, credentials_file='credential
         credentials_file, scopes=scopes)
     service = build('drive', 'v3', credentials=creds)
 
-    # Execute export request
-    request = service.files().export_media(
-        fileId=document_id,
-        mimeType='application/pdf'
-    )
+    try:
+        # Execute export request
+        request = service.files().export_media(
+            fileId=document_id,
+            mimeType='application/pdf'
+        )
 
-    # Write stream to local file
-    file = io.BytesIO()
-    downloader = MediaIoBaseDownload(file, request)
-    done = False
-    while done is False:
-        status, done = downloader.next_chunk()
+        # Write stream to local file
+        file = io.BytesIO()
+        downloader = MediaIoBaseDownload(file, request)
+        done = False
+        while done is False:
+            status, done = downloader.next_chunk()
 
-    with open(output_filepath, 'wb') as f:
-        f.write(file.getvalue())
-    print(f"Exported Google Doc {document_id} to {output_filepath}")
+        with open(output_filepath, 'wb') as f:
+            f.write(file.getvalue())
+        print(f"Exported Google Doc {document_id} to {output_filepath}")
+    except HttpError as error:
+        if error.resp.status == 404:
+            print(f"\nError: Google Drive Document with ID '{document_id}' not found.")
+            print("\nDebugging Steps:")
+            print(f"1. The document hasn't been shared with the service account. Share the Google Doc with:\n   {creds.service_account_email}\n   as a Viewer or Editor.")
+            print("2. The Document ID is incorrect. Double-check that the ID in your config exactly matches the ID in the URL of your Google Doc.")
+            exit(1)
+        else:
+            raise
 
 
 def find_and_split_pdf(pdf_path, main_output_dir, ignore_output_dir, sections_config, processing_config, output_type='all',
@@ -265,6 +276,17 @@ if __name__ == "__main__":
         action="store_true",
         help="Allow missing sections or files instead of raising an error"
     )
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        "--svg-only",
+        action="store_true",
+        help="Only process SVG figures and skip PDF processing"
+    )
+    group.add_argument(
+        "--skip-svg",
+        action="store_true",
+        help="Skip processing of SVG figures"
+    )
     args = parser.parse_args()
     strict_mode = not args.lax
 
@@ -293,14 +315,19 @@ if __name__ == "__main__":
     los = config.get("los", {})
     merge = config.get("merge", {})
 
-    if paths.get("gdrive_document_id"):
+    if paths.get("gdrive_document_id") and not args.svg_only:
         export_doc_to_pdf(
             paths["gdrive_document_id"],
             paths["pdf_path"],
             paths.get("gdrive_credentials_file", "credentials.json")
         )
 
-    process_svg_files(paths["figure_directory"])
+    if not args.skip_svg:
+        process_svg_files(paths["figure_directory"])
+
+    if args.svg_only:
+        print("SVG processing complete. Exiting due to --svg-only flag.")
+        exit(0)
 
     saved_paths = find_and_split_pdf(
         paths["pdf_path"],
