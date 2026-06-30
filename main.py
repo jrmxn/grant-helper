@@ -242,10 +242,10 @@ def process_svg_files(target_dir):
     cmd_template_png = 'inkscape --export-type="png" --export-area-page --export-dpi=600 "{path}" && mv "{path_no_ext}.png" "{output_dir}"'
     cmd_template_pdf = 'inkscape --export-type="pdf" --export-area-page "{path}" && mv "{path_no_ext}.pdf" "{output_dir}"'
 
-    # Walk through the directory to find .svg files, excluding the 'wip_ignore' folder
+    # Walk through the directory to find .svg files, excluding specific folders
     for root, dirs, files in os.walk(target_dir):
-        if 'wip_ignore' in dirs:
-            dirs.remove('wip_ignore')  # Do not traverse into the 'wip_ignore' directory
+        # Do not traverse into ignored directories (case-insensitive check)
+        dirs[:] = [d for d in dirs if d.lower() not in ('wip_ignore', 'temp', 'ignore')]
 
         for file in files:
             if file.endswith('.svg'):
@@ -254,11 +254,19 @@ def process_svg_files(target_dir):
 
                 # Execute PNG conversion
                 cmd_png = cmd_template_png.format(path=file_path, path_no_ext=file_path_no_ext, output_dir=png_dir)
-                subprocess.run(cmd_png, shell=True, check=True)
+                try:
+                    subprocess.run(cmd_png, shell=True, check=True, capture_output=True, text=True)
+                except subprocess.CalledProcessError as e:
+                    print(f"Error converting {file} to PNG:\n{e.stderr}")
+                    raise
 
                 # Execute PDF conversion
                 cmd_pdf = cmd_template_pdf.format(path=file_path, path_no_ext=file_path_no_ext, output_dir=pdf_dir)
-                subprocess.run(cmd_pdf, shell=True, check=True)
+                try:
+                    subprocess.run(cmd_pdf, shell=True, check=True, capture_output=True, text=True)
+                except subprocess.CalledProcessError as e:
+                    print(f"Error converting {file} to PDF:\n{e.stderr}")
+                    raise
 
 
 if __name__ == "__main__":
