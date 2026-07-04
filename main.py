@@ -17,6 +17,54 @@ except ImportError:
     HAS_GDRIVE = False
 
 
+def process_stream_for_highlights(stream):
+    lines = stream.split(b"\n")
+    new_lines = []
+    in_q_block = False
+    q_block = []
+    deleted_count = 0
+
+    for line in lines:
+        if line.strip() == b"q":
+            if in_q_block:
+                new_lines.extend(q_block)
+            in_q_block = True
+            q_block = [line]
+        elif in_q_block:
+            q_block.append(line)
+            if line.strip() == b"Q":
+                has_re = any(b" re" in l for l in q_block)
+                has_f = any(l.strip() in (b"f", b"f*", b"B", b"b", b"F", b"B*", b"b*") for l in q_block)
+                
+                color_vals = None
+                for i, l in enumerate(q_block):
+                    if b" rg" in l:
+                        parts = l.split(b" ")
+                        try:
+                            rg_idx = parts.index(b"rg")
+                            r, g, b = float(parts[rg_idx-3]), float(parts[rg_idx-2]), float(parts[rg_idx-1])
+                            color_vals = (r, g, b)
+                        except:
+                            pass
+                
+                if has_re and has_f and color_vals is not None:
+                    r, g, b = color_vals
+                    if not (r < 0.1 and g < 0.1 and b < 0.1) and not (r > 0.95 and g > 0.95 and b > 0.95):
+                        deleted_count += 1
+                    else:
+                        new_lines.extend(q_block)
+                else:
+                    new_lines.extend(q_block)
+                in_q_block = False
+        else:
+            new_lines.append(line)
+            
+    if in_q_block:
+        new_lines.extend(q_block)
+        
+    return b"\n".join(new_lines), deleted_count
+
+
 def export_doc_to_pdf(document_id, output_filepath, credentials_file='credentials.json'):
     if not HAS_GDRIVE:
         raise ImportError("google-api-python-client and google-auth are required for Google Drive export.")
@@ -149,13 +197,24 @@ def find_and_split_pdf(pdf_path, main_output_dir, ignore_output_dir, sections_co
         # Remove hyperlinks if requested, except for BIOSKETCHES
         if processing_config.get("remove_hyperlinks", True) and "BIOSKETCH" not in section.upper():
             links_count = 0
+            deleted_highlights_count = 0
             for page in section_doc:
                 links = page.get_links()
                 for link in links:
                     page.delete_link(link)
                     links_count += 1
+                
+                for xref in page.get_contents():
+                    stream = section_doc.xref_stream(xref)
+                    new_stream, del_count = process_stream_for_highlights(stream)
+                    if del_count > 0:
+                        section_doc.update_stream(xref, new_stream)
+                        deleted_highlights_count += del_count
+
             if links_count > 0:
                 print(f"Removed {links_count} hyperlinks from section '{section}'.")
+            if deleted_highlights_count > 0:
+                print(f"Deleted {deleted_highlights_count} highlights in section '{section}'.")
 
         # Save the section
         section_doc.save(output_path)
@@ -202,13 +261,24 @@ def merge_sets(saved_paths, merge_config, processing_config, output_dir, strict=
                 # Apply hyperlink removal for external files if requested (skip BIOSKETCHES)
                 if remove_links and "BIOSKETCH" not in section.upper():
                     links_count = 0
+                    deleted_highlights_count = 0
                     for page in pdf_doc:
                         links = page.get_links()
                         for link in links:
                             page.delete_link(link)
                             links_count += 1
+                        
+                        for xref in page.get_contents():
+                            stream = pdf_doc.xref_stream(xref)
+                            new_stream, del_count = process_stream_for_highlights(stream)
+                            if del_count > 0:
+                                pdf_doc.update_stream(xref, new_stream)
+                                deleted_highlights_count += del_count
+
                     if links_count > 0:
                         print(f"Removed {links_count} hyperlinks from external file '{os.path.basename(section)}'.")
+                    if deleted_highlights_count > 0:
+                        print(f"Deleted {deleted_highlights_count} highlights in external file '{os.path.basename(section)}'.")
                 
                 merged_pdf.insert_pdf(pdf_doc)
                 pdf_doc.close()
