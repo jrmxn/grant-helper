@@ -104,7 +104,7 @@ def export_doc_to_pdf(document_id, output_filepath, credentials_file='credential
 
 
 def find_and_split_pdf(pdf_path, main_output_dir, ignore_output_dir, sections_config, processing_config, output_type='all',
-                        attach_string='datetime', strict=True):
+                        attach_string='datetime', strict=True, remove_highlights=False):
     # Ensure output directories exist
     os.makedirs(main_output_dir, exist_ok=True)
     os.makedirs(ignore_output_dir, exist_ok=True)
@@ -113,7 +113,7 @@ def find_and_split_pdf(pdf_path, main_output_dir, ignore_output_dir, sections_co
 
     if attach_string == 'datetime':
         now = datetime.now()
-        strformat = '%Y-%m-%dT%H'
+        strformat = '%Y-%m-%dT%H%M'
         formatted_date = now.strftime(strformat)
         es = f'_{formatted_date}'
     else:
@@ -204,12 +204,13 @@ def find_and_split_pdf(pdf_path, main_output_dir, ignore_output_dir, sections_co
                     page.delete_link(link)
                     links_count += 1
                 
-                for xref in page.get_contents():
-                    stream = section_doc.xref_stream(xref)
-                    new_stream, del_count = process_stream_for_highlights(stream)
-                    if del_count > 0:
-                        section_doc.update_stream(xref, new_stream)
-                        deleted_highlights_count += del_count
+                if remove_highlights:
+                    for xref in page.get_contents():
+                        stream = section_doc.xref_stream(xref)
+                        new_stream, del_count = process_stream_for_highlights(stream)
+                        if del_count > 0:
+                            section_doc.update_stream(xref, new_stream)
+                            deleted_highlights_count += del_count
 
             if links_count > 0:
                 print(f"Removed {links_count} hyperlinks from section '{section}'.")
@@ -228,12 +229,12 @@ def find_and_split_pdf(pdf_path, main_output_dir, ignore_output_dir, sections_co
     return saved_paths
 
 
-def merge_sets(saved_paths, merge_config, processing_config, output_dir, strict=True):
+def merge_sets(saved_paths, merge_config, processing_config, output_dir, strict=True, remove_highlights=False):
     if not merge_config or "sets" not in merge_config:
         return
 
     os.makedirs(output_dir, exist_ok=True)
-    current_datetime = datetime.now().strftime("%Y-%m-%dT%H")
+    current_datetime = datetime.now().strftime("%Y-%m-%dT%H%M")
     remove_links = processing_config.get("remove_hyperlinks", True)
 
     for merge_set in merge_config["sets"]:
@@ -268,12 +269,13 @@ def merge_sets(saved_paths, merge_config, processing_config, output_dir, strict=
                             page.delete_link(link)
                             links_count += 1
                         
-                        for xref in page.get_contents():
-                            stream = pdf_doc.xref_stream(xref)
-                            new_stream, del_count = process_stream_for_highlights(stream)
-                            if del_count > 0:
-                                pdf_doc.update_stream(xref, new_stream)
-                                deleted_highlights_count += del_count
+                        if remove_highlights:
+                            for xref in page.get_contents():
+                                stream = pdf_doc.xref_stream(xref)
+                                new_stream, del_count = process_stream_for_highlights(stream)
+                                if del_count > 0:
+                                    pdf_doc.update_stream(xref, new_stream)
+                                    deleted_highlights_count += del_count
 
                     if links_count > 0:
                         print(f"Removed {links_count} hyperlinks from external file '{os.path.basename(section)}'.")
@@ -354,6 +356,11 @@ if __name__ == "__main__":
         action="store_true",
         help="Allow missing sections or files instead of raising an error"
     )
+    parser.add_argument(
+        "--remove-highlights",
+        action="store_true",
+        help="Remove all text highlights from the document (skipped by default)"
+    )
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
         "--svg-only",
@@ -415,8 +422,9 @@ if __name__ == "__main__":
         processing,
         output_type='all',
         attach_string=processing.get("attach_string", "datetime"),
-        strict=strict_mode
+        strict=strict_mode,
+        remove_highlights=args.remove_highlights
     )
 
     # Generic merge sets
-    merge_sets(saved_paths, merge, processing, paths["main_output_dir"], strict=strict_mode)
+    merge_sets(saved_paths, merge, processing, paths["main_output_dir"], strict=strict_mode, remove_highlights=args.remove_highlights)

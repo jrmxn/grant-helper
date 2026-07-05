@@ -82,7 +82,7 @@ Example `env.json` (Note: On Windows, use double backslashes `\\` or forward sla
     - `gdrive_credentials_file`: (Optional) Path to your Google Cloud JSON key (defaults to `credentials.json`).
     - `pdf_path`, `figure_directory`, etc.: Standard path definitions.
 - **`[sections]`**: Map grant section headings (as they appear in the PDF) to their desired output filenames.
-- **`[processing]`**: Define `science_keys` (sections to exclude in 'science' mode) and `remove_hyperlinks` settings. Note that all text highlights (background colors) are automatically removed from the processed PDFs, leaving the underlying text intact.
+- **`[processing]`**: Define `science_keys` (sections to exclude in 'science' mode) and `remove_hyperlinks` settings.
 - **`[merge]`**: Define bundle sets. You can use section names (from the `[sections]` keys) OR direct absolute paths to existing PDF files.
 
 ### 3. Running the Script
@@ -94,6 +94,9 @@ python main.py --config configs/2024_r03.toml
 You can use the following mutually exclusive flags to control which parts of the pipeline run:
 - `--svg-only`: Skips downloading the Google Doc and splitting/merging the PDFs. Only processes SVG figures.
 - `--skip-svg`: Skips processing of SVG figures, but downloads, splits, and merges PDFs as usual.
+
+You can also use the following optional flags:
+- `--remove-highlights`: Removes all text highlights (background colors) from the processed PDFs, leaving the underlying text intact. (By default, highlight deletion is skipped).
 
 Examples:
 ```bash
