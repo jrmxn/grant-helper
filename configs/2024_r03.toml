@@ -2,8 +2,7 @@
 use_env_json = false
 figure_directory = "/mnt/hdd2/Dropbox/Research/reports/2024-R03/misc/figures/"
 pdf_path = "/home/mcintosh/Downloads/2024-07-01_r03 - hbMEP grant R03.pdf"
-main_output_dir = "/mnt/hdd2/Dropbox/Research/reports/2024-R03/temp/"
-ignore_output_dir = "/mnt/hdd2/Dropbox/Research/reports/2024-R03/misc/gdoc_trash"
+output_dir = "/mnt/hdd2/Dropbox/Research/reports/2024-R03/temp/"
 
 [sections]
 INTRODUCTION = "introduction.pdf"

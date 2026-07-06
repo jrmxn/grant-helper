@@ -3,6 +3,7 @@ import io
 import json
 import os
 import subprocess
+import tarfile
 import tomllib
 from datetime import datetime
 from pathlib import Path
@@ -414,10 +415,15 @@ if __name__ == "__main__":
         print("SVG processing complete. Exiting due to --svg-only flag.")
         exit(0)
 
+    output_dir = paths["output_dir"]
+    main_output_dir = os.path.join(output_dir, "main")
+    ignore_output_dir = os.path.join(output_dir, "ignore")
+    archive_output_dir = os.path.join(output_dir, "archive")
+
     saved_paths = find_and_split_pdf(
         paths["pdf_path"],
-        paths["main_output_dir"],
-        paths["ignore_output_dir"],
+        main_output_dir,
+        ignore_output_dir,
         sections,
         processing,
         output_type='all',
@@ -427,4 +433,18 @@ if __name__ == "__main__":
     )
 
     # Generic merge sets
-    merge_sets(saved_paths, merge, processing, paths["main_output_dir"], strict=strict_mode, remove_highlights=args.remove_highlights)
+    merge_sets(saved_paths, merge, processing, main_output_dir, strict=strict_mode, remove_highlights=args.remove_highlights)
+
+    # Create archive of main and ignore directories
+    os.makedirs(archive_output_dir, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    archive_name = f"run_archive_{timestamp}.tar.gz"
+    archive_path = os.path.join(archive_output_dir, archive_name)
+    
+    print(f"Creating archive {archive_path}...")
+    with tarfile.open(archive_path, "w:gz") as tar:
+        if os.path.exists(main_output_dir):
+            tar.add(main_output_dir, arcname="main")
+        if os.path.exists(ignore_output_dir):
+            tar.add(ignore_output_dir, arcname="ignore")
+    print("Archive created successfully.")

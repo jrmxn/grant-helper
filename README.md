@@ -68,8 +68,7 @@ Example `env.json` (Note: On Windows, use double backslashes `\\` or forward sla
 {
   "figure_directory": "/path/to/figures/",
   "pdf_path": "/path/to/downloaded.pdf",
-  "main_output_dir": "/path/to/output/",
-  "ignore_output_dir": "/path/to/output/ignore/",
+  "output_dir": "/path/to/output/",
   "gdrive_document_id": "YOUR_DOCUMENT_ID",
   "gdrive_credentials_file": "credentials.json"
 }

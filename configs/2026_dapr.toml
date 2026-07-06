@@ -2,8 +2,7 @@
 use_env_json = false
 figure_directory = "/home/mcintosh/Desktop/dapr/grant_helper/figures/"
 pdf_path = "/home/mcintosh/Downloads/2026-05-00_dapr_hbmep-spatial.pdf"
-main_output_dir = "/home/mcintosh/Desktop/dapr/grant_helper/"
-ignore_output_dir = "/home/mcintosh/Desktop/dapr/grant_helper/misc/trash"
+output_dir = "/home/mcintosh/Desktop/dapr/grant_helper/"
 
 [sections]
 "TITLE" = "title_IGNORE.pdf"
