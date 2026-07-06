@@ -250,7 +250,11 @@ def find_and_split_pdf(pdf_path, main_output_dir, ignore_output_dir, sections_co
 
         # Determine the output filename and directory
         output_filename = sections[section]
-        name, extension = output_filename.rsplit('.', 1)
+        if '.' in output_filename:
+            name, extension = output_filename.rsplit('.', 1)
+        else:
+            name = output_filename
+            extension = 'pdf'
         
         # Prepend auto-numbering index from TOML order
         index = toml_order.get(section, 99)
@@ -500,8 +504,9 @@ if __name__ == "__main__":
         exit(0)
 
     output_dir = paths["output_dir"]
-    main_output_dir = os.path.join(output_dir, "main")
-    ignore_output_dir = os.path.join(output_dir, "ignore")
+    main_output_dir = os.path.join(output_dir, "wip", "main")
+    ignore_output_dir = os.path.join(output_dir, "wip", "ignore")
+    figures_output_dir = os.path.join(output_dir, "wip", "figures")
     archive_output_dir = os.path.join(output_dir, "archive")
 
     saved_paths = find_and_split_pdf(
@@ -531,4 +536,6 @@ if __name__ == "__main__":
             tar.add(main_output_dir, arcname="main")
         if os.path.exists(ignore_output_dir):
             tar.add(ignore_output_dir, arcname="ignore")
+        if os.path.exists(figures_output_dir):
+            tar.add(figures_output_dir, arcname="figures")
     print("Archive created successfully.")

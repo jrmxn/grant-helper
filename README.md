@@ -99,16 +99,16 @@ You can also use the following optional flags:
 
 Examples:
 ```bash
-python main.py --config configs/2026_r01-renewal.toml --svg-only
-python main.py --config configs/2026_r01-renewal.toml --skip-svg
+python main.py --config configs/2026_r01_a0-renewal.toml --svg-only
+python main.py --config configs/2026_r01_a0-renewal.toml --skip-svg
 ```
 
 ### 4. Output Directory Structure
 When the script runs, it generates several subdirectories inside your configured `output_dir`:
-- **`main/`**: Contains all standard sections extracted from the PDF and the final merged bundles.
-- **`ignore/`**: Contains sections that are excluded from the main processing (e.g., internal notes).
-- **`archive/`**: At the end of a run, the `main` and `ignore` folders are compressed into a `tar.gz` archive and saved here with a datetime stamp.
-- **`figures/`**: If your grant has a `FIGURES` section, the script will automatically take a high-resolution (300 DPI) screenshot of the table/content on each page of that section (skipping the first page). These screenshots are saved here sequentially as `fig01.png`, `fig02.png`, etc.
+- **`wip/main/`**: Contains all standard sections extracted from the PDF and the final merged bundles.
+- **`wip/ignore/`**: Contains sections that are excluded from the main processing (e.g., internal notes).
+- **`wip/figures/`**: If your grant has a `FIGURES` section, the script will automatically take a high-resolution (300 DPI) screenshot of the table/content on each page of that section (skipping the first page). These screenshots are saved here sequentially as `fig01.png`, `fig02.png`, etc.
+- **`archive/`**: At the end of a run, the `main`, `ignore`, and `figures` folders are compressed into a `tar.gz` archive and saved here (alongside the `wip` folder) with a datetime stamp.
 
 ### 5. Automatic Modifications
 During processing, the script automatically performs several cleanup operations on the generated PDFs:
