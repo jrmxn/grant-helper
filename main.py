@@ -104,6 +104,54 @@ def export_doc_to_pdf(document_id, output_filepath, credentials_file='credential
             raise
 
 
+def extract_figures_to_png(section_doc, output_dir):
+    os.makedirs(output_dir, exist_ok=True)
+    fig_count = 1
+    for i, page in enumerate(section_doc):
+        if i == 0:
+            continue
+        rects = []
+        
+        # 1. Text blocks
+        blocks = page.get_text("blocks")
+        for b in blocks:
+            if b[4].strip():
+                if b[1] > 50 and b[3] < 750:
+                    rects.append(fitz.Rect(b[:4]))
+                    
+        # 2. Images
+        for img in page.get_images():
+            xref = img[0]
+            for r in page.get_image_rects(xref):
+                if r.y0 > 50 and r.y1 < 750:
+                    rects.append(r)
+                    
+        # 3. Drawings (borders of the table)
+        for d in page.get_drawings():
+            r = d["rect"]
+            if r.y0 > 50 and r.y1 < 750 and (r.width * r.height) < (600 * 700):
+                rects.append(r)
+
+        if not rects:
+            continue
+            
+        u_rect = rects[0]
+        for r in rects[1:]:
+            u_rect |= r
+            
+        # Add a padding of 10 points (~3.5mm)
+        u_rect.x0 = max(0, u_rect.x0 - 10)
+        u_rect.y0 = max(0, u_rect.y0 - 10)
+        u_rect.x1 = min(page.rect.x1, u_rect.x1 + 10)
+        u_rect.y1 = min(page.rect.y1, u_rect.y1 + 10)
+            
+        pix = page.get_pixmap(clip=u_rect, dpi=300)
+        out_filename = os.path.join(output_dir, f"fig{fig_count:02d}.png")
+        pix.save(out_filename)
+        print(f"  Extracted {out_filename}")
+        fig_count += 1
+
+
 def find_and_split_pdf(pdf_path, main_output_dir, ignore_output_dir, sections_config, processing_config, output_type='all',
                         attach_string='datetime', strict=True, remove_highlights=False):
     # Ensure output directories exist
@@ -217,6 +265,14 @@ def find_and_split_pdf(pdf_path, main_output_dir, ignore_output_dir, sections_co
                 print(f"Removed {links_count} hyperlinks from section '{section}'.")
             if deleted_highlights_count > 0:
                 print(f"Deleted {deleted_highlights_count} highlights in section '{section}'.")
+
+        # If this is the FIGURES section, extract the tables as pngs
+        if section.upper() == "FIGURES":
+            # output extracted pngs to the parent directory of main_output_dir / "figures"
+            parent_dir = os.path.dirname(os.path.normpath(main_output_dir))
+            extracted_figs_dir = os.path.join(parent_dir, "figures")
+            print(f"Extracting PNG screenshots of figures from '{section}'...")
+            extract_figures_to_png(section_doc, extracted_figs_dir)
 
         # Save the section
         section_doc.save(output_path)

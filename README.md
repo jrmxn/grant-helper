@@ -103,6 +103,13 @@ python main.py --config configs/2026_r01-renewal.toml --svg-only
 python main.py --config configs/2026_r01-renewal.toml --skip-svg
 ```
 
+### 4. Output Directory Structure
+When the script runs, it generates several subdirectories inside your configured `output_dir`:
+- **`main/`**: Contains all standard sections extracted from the PDF and the final merged bundles.
+- **`ignore/`**: Contains sections that are excluded from the main processing (e.g., internal notes).
+- **`archive/`**: At the end of a run, the `main` and `ignore` folders are compressed into a `tar.gz` archive and saved here with a datetime stamp.
+- **`figures/`**: If your grant has a `FIGURES` section, the script will automatically take a high-resolution (300 DPI) screenshot of the table/content on each page of that section (skipping the first page). These screenshots are saved here sequentially as `fig01.png`, `fig02.png`, etc.
+
 ### Strict Mode
 By default, the script operates in **strict mode**. If any section defined in your TOML is not found in the PDF, or if any file path in a merge set is missing, the script will raise an error and exit.
 
