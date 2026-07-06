@@ -2,6 +2,7 @@ import fitz  # PyMuPDF
 import io
 import json
 import os
+import re
 import subprocess
 import tarfile
 import tomllib
@@ -102,6 +103,23 @@ def export_doc_to_pdf(document_id, output_filepath, credentials_file='credential
             exit(1)
         else:
             raise
+
+
+def remove_autoremove_footers(doc):
+    autoremove_count = 0
+    for page in doc:
+        text = page.get_text()
+        matches = re.findall(r"\[AUTOREMOVE:\s*\d+\]", text, re.IGNORECASE)
+        has_redactions = False
+        for match in set(matches):
+            rects = page.search_for(match)
+            for rect in rects:
+                page.add_redact_annot(rect, fill=None, cross_out=False)
+                has_redactions = True
+                autoremove_count += 1
+        if has_redactions:
+            page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE)
+    return autoremove_count
 
 
 def extract_figures_to_png(section_doc, output_dir):
@@ -266,6 +284,11 @@ def find_and_split_pdf(pdf_path, main_output_dir, ignore_output_dir, sections_co
             if deleted_highlights_count > 0:
                 print(f"Deleted {deleted_highlights_count} highlights in section '{section}'.")
 
+        # Automatically search for and remove [AUTOREMOVE: X] text
+        autoremove_count = remove_autoremove_footers(section_doc)
+        if autoremove_count > 0:
+            print(f"Removed {autoremove_count} AUTOREMOVE footers from section '{section}'.")
+
         # If this is the FIGURES section, extract the tables as pngs
         if section.upper() == "FIGURES":
             # output extracted pngs to the parent directory of main_output_dir / "figures"
@@ -338,6 +361,11 @@ def merge_sets(saved_paths, merge_config, processing_config, output_dir, strict=
                         print(f"Removed {links_count} hyperlinks from external file '{os.path.basename(section)}'.")
                     if deleted_highlights_count > 0:
                         print(f"Deleted {deleted_highlights_count} highlights in external file '{os.path.basename(section)}'.")
+
+                # Remove AUTOREMOVE footers from external files as well
+                ext_autoremove_count = remove_autoremove_footers(pdf_doc)
+                if ext_autoremove_count > 0:
+                    print(f"Removed {ext_autoremove_count} AUTOREMOVE footers from external file '{os.path.basename(section)}'.")
                 
                 merged_pdf.insert_pdf(pdf_doc)
                 pdf_doc.close()

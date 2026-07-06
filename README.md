@@ -110,6 +110,12 @@ When the script runs, it generates several subdirectories inside your configured
 - **`archive/`**: At the end of a run, the `main` and `ignore` folders are compressed into a `tar.gz` archive and saved here with a datetime stamp.
 - **`figures/`**: If your grant has a `FIGURES` section, the script will automatically take a high-resolution (300 DPI) screenshot of the table/content on each page of that section (skipping the first page). These screenshots are saved here sequentially as `fig01.png`, `fig02.png`, etc.
 
+### 5. Automatic Modifications
+During processing, the script automatically performs several cleanup operations on the generated PDFs:
+- **AUTOREMOVE Footers**: The script searches every page for text matching the pattern `[AUTOREMOVE: X]` (where X is any number). It cleanly removes this text and its underlying vector paths without leaving any redaction boxes.
+- **Hyperlinks**: By default, all clickable hyperlinks are removed from the document (except in `BIOSKETCH` sections) to comply with submission guidelines.
+- **Highlights**: Controlled via the `--remove-highlights` flag. If enabled, it deletes all PDF highlight annotations.
+
 ### Strict Mode
 By default, the script operates in **strict mode**. If any section defined in your TOML is not found in the PDF, or if any file path in a merge set is missing, the script will raise an error and exit.
 
