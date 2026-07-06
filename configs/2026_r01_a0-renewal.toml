@@ -2,6 +2,7 @@
 use_env_json = true
 
 [sections]
+#"INTRODUCTION" = "introduction.pdf"  # needed for _r01_a1
 "SPECIFIC AIMS" = "specific_aims.pdf"
 "RESEARCH STRATEGY" = "research_strategy.pdf"
 "PROGRESS REPORT PUBLICATION LIST" = "pr_publicatio_list.pdf"
