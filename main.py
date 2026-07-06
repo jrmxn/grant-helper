@@ -122,6 +122,28 @@ def remove_autoremove_footers(doc):
     return autoremove_count
 
 
+def flatten_pdf(pdf_path):
+    """Uses Ghostscript to flatten the PDF and sanitize objects to prevent ASSIST corruption errors."""
+    temp_path = pdf_path + ".temp.pdf"
+    cmd = [
+        "gs",
+        "-sDEVICE=pdfwrite",
+        "-dCompatibilityLevel=1.4",
+        "-dNOPAUSE",
+        "-dQUIET",
+        "-dBATCH",
+        f"-sOutputFile={temp_path}",
+        pdf_path
+    ]
+    try:
+        subprocess.run(cmd, check=True)
+        os.replace(temp_path, pdf_path)
+    except subprocess.CalledProcessError as e:
+        print(f"Warning: Failed to flatten {os.path.basename(pdf_path)} using Ghostscript. {e}")
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+
+
 def extract_figures_to_png(section_doc, output_dir):
     os.makedirs(output_dir, exist_ok=True)
     fig_count = 1
@@ -171,7 +193,7 @@ def extract_figures_to_png(section_doc, output_dir):
 
 
 def find_and_split_pdf(pdf_path, main_output_dir, ignore_output_dir, sections_config, processing_config, output_type='all',
-                        attach_string='datetime', strict=True, remove_highlights=False):
+                        attach_string='datetime', strict=True, remove_highlights=False, flatten=False):
     # Ensure output directories exist
     os.makedirs(main_output_dir, exist_ok=True)
     os.makedirs(ignore_output_dir, exist_ok=True)
@@ -304,6 +326,8 @@ def find_and_split_pdf(pdf_path, main_output_dir, ignore_output_dir, sections_co
         # Save the section
         section_doc.save(output_path)
         section_doc.close()
+        if flatten:
+            flatten_pdf(output_path)
         saved_paths[section] = output_path
         print(f"Saved section '{section}' to '{output_path}'.")
 
@@ -313,7 +337,7 @@ def find_and_split_pdf(pdf_path, main_output_dir, ignore_output_dir, sections_co
     return saved_paths
 
 
-def merge_sets(saved_paths, merge_config, processing_config, output_dir, strict=True, remove_highlights=False):
+def merge_sets(saved_paths, merge_config, processing_config, output_dir, strict=True, remove_highlights=False, flatten=False):
     if not merge_config or "sets" not in merge_config:
         return
 
@@ -386,6 +410,8 @@ def merge_sets(saved_paths, merge_config, processing_config, output_dir, strict=
             output_path = os.path.join(output_dir, output_filename)
             merged_pdf.save(output_path)
             merged_pdf.close()
+            if flatten:
+                flatten_pdf(output_path)
             print(f"Created merged PDF '{output_path}' from sections: {', '.join(files_merged)}")
         else:
             merged_pdf.close()
@@ -449,6 +475,11 @@ if __name__ == "__main__":
         "--remove-highlights",
         action="store_true",
         help="Remove all text highlights from the document (skipped by default)"
+    )
+    parser.add_argument(
+        "--flatten-pdf",
+        action="store_true",
+        help="Use Ghostscript to flatten all generated PDFs to prevent ASSIST corruption issues"
     )
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -518,11 +549,12 @@ if __name__ == "__main__":
         output_type='all',
         attach_string=processing.get("attach_string", "datetime"),
         strict=strict_mode,
-        remove_highlights=args.remove_highlights
+        remove_highlights=args.remove_highlights,
+        flatten=args.flatten_pdf
     )
 
     # Generic merge sets
-    merge_sets(saved_paths, merge, processing, main_output_dir, strict=strict_mode, remove_highlights=args.remove_highlights)
+    merge_sets(saved_paths, merge, processing, main_output_dir, strict=strict_mode, remove_highlights=args.remove_highlights, flatten=args.flatten_pdf)
 
     # Create archive of main and ignore directories
     os.makedirs(archive_output_dir, exist_ok=True)

@@ -87,7 +87,7 @@ Example `env.json` (Note: On Windows, use double backslashes `\\` or forward sla
 ### 3. Running the Script
 Run the script by specifying a configuration file:
 ```bash
-python main.py --config configs/2024_r03.toml
+python main.py --config configs/2024_hbmep_r03.toml
 ```
 
 You can use the following mutually exclusive flags to control which parts of the pipeline run:
@@ -96,11 +96,12 @@ You can use the following mutually exclusive flags to control which parts of the
 
 You can also use the following optional flags:
 - `--remove-highlights`: Removes all text highlights (background colors) from the processed PDFs, leaving the underlying text intact. (By default, highlight deletion is skipped).
+- `--flatten-pdf`: Routes every generated PDF through Ghostscript to effectively "Print to PDF". This completely sanitizes and rebuilds the PDF object structures, which resolves file corruption and slow-loading image errors when uploading attachments to NIH ASSIST.
 
 Examples:
 ```bash
-python main.py --config configs/2026_r01_a0-renewal.toml --svg-only
-python main.py --config configs/2026_r01_a0-renewal.toml --skip-svg
+python main.py --config configs/2026_scap_r01_a0.toml --svg-only
+python main.py --config configs/2026_scap_r01_a0.toml --skip-svg
 ```
 
 ### 4. Output Directory Structure

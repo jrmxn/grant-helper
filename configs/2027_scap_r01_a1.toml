@@ -1,0 +1,64 @@
+[paths]
+use_env_json = true
+
+[sections]
+"INTRODUCTION" = "introduction.pdf"
+"SPECIFIC AIMS" = "specific_aims.pdf"
+"RESEARCH STRATEGY" = "research_strategy.pdf"
+"PROGRESS REPORT PUBLICATION LIST" = "pr_publicatio_list.pdf"
+"MULTI-PI LEADERSHIP PLAN" = "multi-pi_leadership_plan.pdf"
+"RESOURCE SHARING PLAN" = "resource_sharing.pdf"
+SUMMARY = "summary.pdf"
+NARRATIVE = "narrative.pdf"
+REFERENCES = "references.pdf"
+FACILITIES = "facilities.pdf"
+EQUIPMENT = "equipment.pdf"
+#"PERSONNEL JUSTIFICATION" = "personnel_just.pdf"
+#"ADDITIONAL JUSTIFICATION" = "addtional_narrative_justification_dmsj.pdf"
+"BUDGET JUSTIFICATION" = "budget_justification.pdf"
+"DATA MANAGEMENT AND SHARING" = "other_plans_IGNORE.pdf"
+"EXPLANATION FOR USE OF HUMAN SUBJECTS" = "s0_explanation_humans.pdf"
+"INCLUSION OF INDIVIDUALS ACROSS THE LIFESPAN (STUDY 1)" = "s1_inclusion_lifespan.pdf"
+"INCLUSION OF WOMEN AND MINORITIES (STUDY 1)" = "s1_inclusion_wm.pdf"
+"RECRUITMENT AND RETENTION PLAN (STUDY 1)" = "s1_recruitment.pdf"
+"STUDY TIMELINE (STUDY 1)" = "s1_timeline.pdf"
+"PROTECTION OF HUMAN SUBJECTS (STUDY 1)" = "s1_protection_human.pdf"
+"SINGLE IRB PLAN" = "s1_singleIRBplan.pdf"
+"DATA AND SAFETY MONITORING PLAN (STUDY 1)" = "s1_dsm_plan.pdf"
+"STRUCTURE OF THE STUDY TEAM (STUDY 1)" = "s1_structure_team.pdf"
+"STATISTICAL DESIGN AND POWER (STUDY 1)" = "s1_design_and_power.pdf"
+"DISSEMINATION PLAN (STUDY 1)" = "s1_dissemination_plan.pdf"
+"INCLUSION OF INDIVIDUALS ACROSS THE LIFESPAN (STUDY 2)" = "s2_inclusion_lifespan.pdf"
+"INCLUSION OF WOMEN AND MINORITIES (STUDY 2)" = "s2_inclusion_wm.pdf"
+"RECRUITMENT AND RETENTION PLAN (STUDY 2)" = "s2_recruitment.pdf"
+"STUDY TIMELINE (STUDY 2)" = "s2_timeline.pdf"
+"PROTECTION OF HUMAN SUBJECTS (STUDY 2)" = "s2_protection_human.pdf"
+"DATA AND SAFETY MONITORING PLAN (STUDY 2)" = "s2_dsm_plan.pdf"
+"STRUCTURE OF THE STUDY TEAM (STUDY 2)" = "s2_structure_team.pdf"
+"STATISTICAL DESIGN AND POWER (STUDY 2)" = "s2_design_and_power.pdf"
+"AVAILABILITY OF IP/IND/IDE STATUS (STUDY 2)" = "s2_availablity_ipindide.pdf"
+"DISSEMINATION PLAN (STUDY 2)" = "s2_dissemination_plan.pdf"
+"STUDY 1 DESIGN (NOT AN ATTACHMENT)"= "s1_design_IGNORE.pdf"
+"INCLUSION ENROLLMENT REPORT (STUDY 1 - NOT AN ATTACHMENT)" = "s1_inclusion_enrollment_IGNORE.pdf"
+"ELIGIBILITY CRITERIA (STUDY 1 - NOT AN ATTACHMENT)" = "s1_Elegibility_criteria_IGNORE.pdf"
+"STUDY 2 DESIGN (NOT AN ATTACHMENT)" = "s2_design_IGNORE.pdf"
+"INCLUSION ENROLLMENT REPORT (STUDY 2 - NOT AN ATTACHMENT)" = "s2_inclusion_enrollment_IGNORE.pdf"
+"ELIGIBILITY CRITERIA (STUDY 2 - NOT AN ATTACHMENT)" = "s2_Elegibility_criteria_IGNORE.pdf"
+TITLE = "title_section_IGNORE.pdf"
+FIGURES = "figures_section_IGNORE.pdf"
+INTERNAL = "internal_section_IGNORE.pdf"
+
+[merge]
+sets = [
+    { name = "science_bundle", sections = ["SUMMARY", "NARRATIVE", "SPECIFIC AIMS", "RESEARCH STRATEGY", "REFERENCES"] }
+]
+
+[processing]
+remove_hyperlinks = true
+attach_string = "datetime"
+science_keys = [
+    "FACILITIES", "EQUIPMENT", "BUDGET JUSTIFICATION", "RESOURCE SHARING PLAN",
+    "DATA MANAGEMENT AND SHARING", "ELIGIBILITY CRITERIA", "INCLUSION OF INDIVIDUALS ACROSS THE LIFESPAN",
+    "INCLUSION OF WOMEN AND MINORITIES", "RECRUITMENT AND RETENTION PLAN", "PROTECTION OF HUMAN SUBJECTS",
+    "DATA AND SAFETY MONITORING PLAN", "STRUCTURE OF THE STUDY TEAM"
+]
