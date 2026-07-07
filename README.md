@@ -104,14 +104,24 @@ python main.py --config configs/2026_scap_r01_a0.toml --svg-only
 python main.py --config configs/2026_scap_r01_a0.toml --skip-svg
 ```
 
-### 4. Output Directory Structure
+### 4. Figure Management Workflow
+To robustly manage figures and captions while keeping cross-references intact in Google Docs, follow this workflow:
+1. **Design**: Create your figures in Inkscape (or similar) and save them as SVGs.
+2. **Convert**: Run `grant-helper` to export these SVGs into high-quality PNGs.
+3. **Stage in Google Docs**: At the end of your Google Doc, create a dedicated `FIGURES` section. For each figure, insert a 2-cell table (one table per page). Place the generated PNG in the top cell and write the figure caption in the bottom cell. 
+4. **Extract**: When you run `grant-helper`, it automatically scans the `FIGURES` section and takes a tight, high-resolution (300 DPI) screenshot of each table. 
+5. **Re-insert**: These extracted screenshots (combining the figure and caption into one image) are saved sequentially (e.g. `fig01.png`, `fig02.png`). You can now insert these fully compiled images back into the appropriate locations within your main narrative.
+
+By grouping the image and caption into a single image via the `FIGURES` section, you can safely use Google Docs' cross-referencing features in your narrative without reordering issues breaking your captions or references.
+
+### 5. Output Directory Structure
 When the script runs, it generates several subdirectories inside your configured `output_dir`:
 - **`wip/main/`**: Contains all standard sections extracted from the PDF and the final merged bundles.
 - **`wip/ignore/`**: Contains sections that are excluded from the main processing (e.g., internal notes).
 - **`wip/figures/`**: If your grant has a `FIGURES` section, the script will automatically take a high-resolution (300 DPI) screenshot of the table/content on each page of that section (skipping the first page). These screenshots are saved here sequentially as `fig01.png`, `fig02.png`, etc.
 - **`archive/`**: At the end of a run, the `main`, `ignore`, and `figures` folders are compressed into a `tar.gz` archive and saved here (alongside the `wip` folder) with a datetime stamp.
 
-### 5. Automatic Modifications
+### 6. Automatic Modifications
 During processing, the script automatically performs several cleanup operations on the generated PDFs:
 - **AUTOREMOVE Footers**: The script searches every page for text matching the pattern `[AUTOREMOVE: X]` (where X is any number). It cleanly removes this text and its underlying vector paths without leaving any redaction boxes.
 - **Hyperlinks**: By default, all clickable hyperlinks are removed from the document (except in `BIOSKETCH` sections) to comply with submission guidelines.

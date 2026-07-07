@@ -1,0 +1,47 @@
+[paths]
+use_env_json = true
+
+[sections]
+"SPECIFIC AIMS" = "specific_aims.pdf"
+"RESEARCH STRATEGY" = "research_strategy.pdf"
+"RESOURCE SHARING PLAN" = "resource_sharing.pdf"
+SUMMARY = "summary.pdf"
+NARRATIVE = "narrative.pdf"
+REFERENCES = "references.pdf"
+FACILITIES = "facilities.pdf"
+EQUIPMENT = "equipment.pdf"
+#"PERSONNEL JUSTIFICATION" = "personnel_just.pdf"
+#"ADDITIONAL JUSTIFICATION" = "addtional_narrative_justification_dmsj.pdf"
+"BUDGET JUSTIFICATION" = "budget_justification.pdf"
+"DATA MANAGEMENT AND SHARING" = "other_plans_IGNORE.pdf"
+"EXPLANATION FOR USE OF HUMAN SUBJECTS" = "s0_explanation_humans.pdf"
+"INCLUSION OF INDIVIDUALS ACROSS THE LIFESPAN" = "s1_inclusion_lifespan.pdf"
+"INCLUSION OF WOMEN AND MINORITIES" = "s1_inclusion_wm.pdf"
+"RECRUITMENT AND RETENTION PLAN" = "s1_recruitment.pdf"
+"STUDY TIMELINE" = "s1_timeline.pdf"
+"PROTECTION OF HUMAN SUBJECTS" = "s1_protection_human.pdf"
+"DATA AND SAFETY MONITORING PLAN" = "s1_dsm_plan.pdf"
+"STRUCTURE OF THE STUDY TEAM" = "s1_structure_team.pdf"
+"STATISTICAL DESIGN AND POWER" = "s1_design_and_power.pdf"
+"DISSEMINATION PLAN" = "s1_dissemination_plan.pdf"
+"STUDY DESIGN (NOT AN ATTACHMENT)"= "s1_design_IGNORE.pdf"
+"INCLUSION ENROLLMENT REPORT (NOT AN ATTACHMENT)" = "s1_inclusion_enrollment_IGNORE.pdf"
+"ELIGIBILITY CRITERIA (NOT AN ATTACHMENT)" = "s1_Elegibility_criteria_IGNORE.pdf"
+TITLE = "title_section_IGNORE.pdf"
+FIGURES = "figures_section_IGNORE.pdf"
+INTERNAL = "internal_section_IGNORE.pdf"
+
+[merge]
+sets = [
+    { name = "science_bundle", sections = ["SUMMARY", "NARRATIVE", "SPECIFIC AIMS", "RESEARCH STRATEGY", "REFERENCES"] }
+]
+
+[processing]
+remove_hyperlinks = true
+attach_string = "datetime"
+science_keys = [
+    "FACILITIES", "EQUIPMENT", "BUDGET JUSTIFICATION", "RESOURCE SHARING PLAN",
+    "DATA MANAGEMENT AND SHARING", "ELIGIBILITY CRITERIA", "INCLUSION OF INDIVIDUALS ACROSS THE LIFESPAN",
+    "INCLUSION OF WOMEN AND MINORITIES", "RECRUITMENT AND RETENTION PLAN", "PROTECTION OF HUMAN SUBJECTS",
+    "DATA AND SAFETY MONITORING PLAN", "STRUCTURE OF THE STUDY TEAM"
+]
