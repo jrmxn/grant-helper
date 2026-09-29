@@ -192,7 +192,7 @@ def extract_figures_to_png(section_doc, output_dir):
         fig_count += 1
 
 
-def find_and_split_pdf(pdf_path, main_output_dir, ignore_output_dir, sections_config, processing_config, output_type='all',
+def find_and_split_pdf(pdf_path, main_output_dir, ignore_output_dir, sections_config, processing_config, merge_config, output_type='all',
                         attach_string='datetime', strict=True, remove_highlights=False, flatten=False):
     # Ensure output directories exist
     os.makedirs(main_output_dir, exist_ok=True)
@@ -223,6 +223,13 @@ def find_and_split_pdf(pdf_path, main_output_dir, ignore_output_dir, sections_co
             sections.pop(key, None)
     else:
         sections = {output_type: sections_full.get(output_type)}
+
+    # Remove merge bundles from sections so we don't try to find them in the PDF
+    if merge_config and "sets" in merge_config:
+        for mset in merge_config.get("sets", []):
+            bundle_name = mset.get("name")
+            if bundle_name in sections:
+                sections.pop(bundle_name)
 
     section_starts = {key: None for key in sections.keys()}
 
@@ -337,7 +344,7 @@ def find_and_split_pdf(pdf_path, main_output_dir, ignore_output_dir, sections_co
     return saved_paths
 
 
-def merge_sets(saved_paths, merge_config, processing_config, output_dir, strict=True, remove_highlights=False, flatten=False):
+def merge_sets(saved_paths, merge_config, processing_config, output_dir, sections_config, strict=True, remove_highlights=False, flatten=False):
     if not merge_config or "sets" not in merge_config:
         return
 
@@ -347,6 +354,7 @@ def merge_sets(saved_paths, merge_config, processing_config, output_dir, strict=
 
     for merge_set in merge_config["sets"]:
         set_name = merge_set["name"]
+        toml_order = {section_name: i for i, section_name in enumerate(sections_config.keys())}
         sections_to_merge = merge_set["sections"]
         preamble = merge_config.get("preamble", "")
         prefix = f"{preamble}_" if preamble else ""
@@ -406,7 +414,17 @@ def merge_sets(saved_paths, merge_config, processing_config, output_dir, strict=
                     print(f"Warning: {error_msg}")
 
         if files_merged:
-            output_filename = f"{prefix}merged_{set_name}_{current_datetime}.pdf"
+            if set_name in sections_config:
+                index = toml_order[set_name]
+                out_template = sections_config[set_name]
+                if '.' in out_template:
+                    name, extension = out_template.rsplit('.', 1)
+                else:
+                    name = out_template
+                    extension = 'pdf'
+                output_filename = f"{index:02d}_{name}_{current_datetime}.{extension}"
+            else:
+                output_filename = f"{prefix}merged_{set_name}_{current_datetime}.pdf"
             output_path = os.path.join(output_dir, output_filename)
             merged_pdf.save(output_path)
             merged_pdf.close()
@@ -546,6 +564,7 @@ if __name__ == "__main__":
         ignore_output_dir,
         sections,
         processing,
+        merge,
         output_type='all',
         attach_string=processing.get("attach_string", "datetime"),
         strict=strict_mode,
@@ -554,7 +573,7 @@ if __name__ == "__main__":
     )
 
     # Generic merge sets
-    merge_sets(saved_paths, merge, processing, main_output_dir, strict=strict_mode, remove_highlights=args.remove_highlights, flatten=args.flatten_pdf)
+    merge_sets(saved_paths, merge, processing, main_output_dir, sections, strict=strict_mode, remove_highlights=args.remove_highlights, flatten=args.flatten_pdf)
 
     # Create archive of main and ignore directories
     os.makedirs(archive_output_dir, exist_ok=True)
