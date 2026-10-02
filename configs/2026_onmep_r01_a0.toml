@@ -14,7 +14,8 @@ los_bundle = "los.pdf"
 otherplan_bundle = "otherplan_dms.pdf"
 "DATA MANAGEMENT AND SHARING" = "otherplan_IGNORE.pdf"
 #"ADDITIONAL JUSTIFICATION" = "addtional_narrative_justification_dmsj.pdf"
-"BUDGET JUSTIFICATION" = "budget_justification.pdf"
+budgetjust_bundle = "budget_justification.pdf"
+"BUDGET JUSTIFICATION" = "budget_justification_IGNORE.pdf"  # n.b. goes in a bundle
 "EXPLANATION FOR USE OF HUMAN SUBJECTS" = "s0_explanation_humans.pdf"
 "INCLUSION OF INDIVIDUALS ACROSS THE LIFESPAN (STUDY 1)" = "s1_inclusion_lifespan.pdf"
 "INCLUSION OF WOMEN AND MINORITIES (STUDY 1)" = "s1_inclusion_wm.pdf"
@@ -45,7 +46,10 @@ sets = [
     { name = "science_bundle", sections = ["SUMMARY", "NARRATIVE", "SPECIFIC AIMS", "RESEARCH STRATEGY", "REFERENCES"]},
     { name = "los_bundle", sections = ["/home/mcintosh/Cloud/Other/Desktop/2026-10-05_onmep_r01_a0/standalone/los_2026-10_cu_carmel.pdf",
         "/home/mcintosh/Cloud/Other/Desktop/2026-10-05_onmep_r01_a0/standalone/los_2026-10_cu_mandigo.pdf"] },
-    { name = "otherplan_bundle", sections = ["/home/mcintosh/Cloud/Other/Desktop/2026-10-05_onmep_r01_a0/standalone/other_plan_dms.pdf"] }
+    { name = "otherplan_bundle", sections = ["/home/mcintosh/Cloud/Other/Desktop/2026-10-05_onmep_r01_a0/standalone/other_plan_dms.pdf"] },
+    { name = "budgetjust_bundle", sections = ["BUDGET JUSTIFICATION",
+        "/home/mcintosh/Cloud/Other/Desktop/2026-10-05_onmep_r01_a0/wip/meta/invoices/digitimer_ds8r_Quote CU 09-30-26.pdf",
+        "/home/mcintosh/Cloud/Other/Desktop/2026-10-05_onmep_r01_a0/wip/meta/invoices/emg_quote_motionlabs_page1.pdf"] }
 ]
 
 [processing]
